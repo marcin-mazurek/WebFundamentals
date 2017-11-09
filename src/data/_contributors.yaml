@@ -8,7 +8,7 @@
 # givenfamily:  # REQUIRED - place a 512x512 px JPG image file with same name in /images/contributors
 #   name:
 #     given: First # Required
-#     family: Last # Required
+#     family: Last # Optional
 #   homepage: https://developers.google.com/web/ # Optional
 #   google: "123456789012345678901"              # Optional - id (must be quoted) or +Name
 #   twitter: petele                              # Recommended - handle only (no @)
@@ -115,7 +115,7 @@ beaufortfrancois:
   country: FR
   role:
     - author
-  homepage: 'https://plus.google.com/+FrancoisBeaufort'
+  google: +FrancoisBeaufort
   github: beaufortfrancois
   description:
     en: Dives into Chromium source code
@@ -152,7 +152,7 @@ ericbidelman:
     - author
   email: e.bidelman@google.com
   description:
-    en: 'Engineer @ Google working on Lighthouse, Web Components, Chrome, and the web'
+    en: 'Engineer @ Google working on web tooling: Headless Chrome, Puppeteer, Lighthouse'
 
 bokan:
   name:
@@ -258,7 +258,7 @@ samchen:
   role:
     - translator
   homepage: 'http://www.zfanw.com/blog/'
-  google: +%E9%99%88%E4%B8%89
+  google: '104787680206754797134'
   twitter: chenxsan
   email: chenxsan@google.com
   description:
@@ -507,7 +507,7 @@ simongong:
   country: JP
   role:
     - translator
-  google: +%E9%BE%9A%E6%8C%AF%E5%8D%8Esimon
+  google: '113525015220376733647'
   email: simon.gong64@gmail.com
   description:
     en: Simon is a Full Stack Developer
@@ -578,6 +578,17 @@ jgruber:
   email: jgruber@google.com
   description:
     en: Jakob is an engineer working on V8
+
+yigu:
+  name:
+    given: Yi
+    family: Gu
+  org:
+    name: Google
+    unit: Chrome
+  country: Canada
+  role:
+    - author
 
 yangguo:
   name:
@@ -930,13 +941,8 @@ wayouliu:
   google: +WayouLiu
   twitter: liuwayong
   github: wayou
-  lanyrd:
   description:
     en: "Wayou is a developer and loves the web"
-  org:
-    name:
-    unit:
-  country:
   role:
     - translator
   email: liuwayong@gmail.com
@@ -1104,6 +1110,22 @@ jeffposnick:
   description:
     en: Web DevRel @ Google
 
+pozdnyakov:
+  name:
+    given: Mikhail
+    family: Pozdnyakov
+  org:
+    name: Intel
+    unit: Web team
+  country: Finland
+  role:
+    - author
+    - engineer
+  github: pozdnyakov
+  email: mikhail.pozdnyakov@intel.com
+  description:
+    en: Mikhail is an Engineer at Intel
+
 rupl:
   name:
     given: Chris
@@ -1161,7 +1183,8 @@ yvoschaap:
   google: +yvo
   twitter: yvoschaap
   email: yvo@yvoschaap.com
-  description: "Loves to code and build great things."
+  description:
+    en: "Loves to code and build great things."
 
 moinshaikh:
   name:
@@ -1179,6 +1202,22 @@ moinshaikh:
   email: montugshaikh@gmail.com
   description:
     en: Moin is a passionate Opensource tech geek working towards making opensource more adoptable.
+
+alexshalamov:
+  name:
+    given: Alexander
+    family: Shalamov
+  org:
+    name: Intel
+    unit: Web team
+  country: Finland
+  role:
+    - author
+    - engineer
+  github: alexshalamov
+  email: alexander.shalamov@intel.com
+  description:
+    en: Alex is an Engineer at Intel
 
 glenshires:
   name:
@@ -1237,6 +1276,19 @@ alansilva:
   email: alan.cezar.silva@gmail.com
   description:
     en: Alan is a JavaScript Developer
+
+vinamratasingal:
+  name:
+    given: Vinamrata
+    family: Singal
+  org:
+    name: Google
+    unit: Chrome
+  country: US
+  role:
+    - author
+  description:
+    en: Lighthouse Product Manager
 
 andismith:
   name:

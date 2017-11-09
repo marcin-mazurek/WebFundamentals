@@ -7,14 +7,27 @@
 
 var fs = require('fs');
 var path = require('path');
-var moment = require('moment');
 var marked = require('marked');
 var mkdirp = require('mkdirp');
 var jsYaml = require('js-yaml');
 var gutil = require('gulp-util');
 var wfRegEx = require('./wfRegEx');
+const wfHelper = require('./wfHelper');
 var Handlebars = require('handlebars');
 require('handlebars-helpers')();
+
+Handlebars.registerHelper('formatDateAtom', function(dt) {
+  return wfHelper.dateFormatAtom(dt);
+});
+Handlebars.registerHelper('formatDateISO', function(dt) {
+  return wfHelper.dateFormatISO(dt);
+});
+Handlebars.registerHelper('formatDatePretty', function(dt) {
+  return wfHelper.dateFormatPretty(dt);
+});
+Handlebars.registerHelper('formatDateRSS', function(dt) {
+  return wfHelper.dateFormatRSS(dt);
+});
 
 function renderTemplate(templateFile, context, outputFile) {
   var ts = fs.readFileSync(templateFile, 'utf8');
@@ -22,22 +35,6 @@ function renderTemplate(templateFile, context, outputFile) {
   var result = template(context);
   mkdirp.sync(path.dirname(outputFile));
   fs.writeFileSync(outputFile, result);
-}
-
-function splitArticlesByMonth(files) {
-  var result = [];
-  files.forEach(function(file) {
-    var month = moment(file.datePublished).format('MM');
-    month = parseInt(month, 10);
-    if (!result[month]) {
-      result[month] = {
-        title: moment.months()[month - 1],
-        articles: []
-      };
-    }
-    result[month].articles.push(file);
-  });
-  return result;
 }
 
 function getFullFeedEntries(articles) {
@@ -66,15 +63,15 @@ function getFullFeedEntries(articles) {
         article.feedAuthor = authorName.trim();
       }
     }
-    var rssPubDate = moment.utc(article.datePublished);
-    article.rssPubDate = rssPubDate.format('DD MMM YYYY HH:mm:ss [GMT]');
+    article.rssPubDate = wfHelper.dateFormatRSS(article.datePublishedMoment);
+    article.atomPubDate = wfHelper.dateFormatAtom(article.datePublishedMoment);
+    article.atomUpdateDate = wfHelper.dateFormatAtom(article.dateUpdatedMoment);
   });
   return articles;
 }
 
 function generateFeeds(files, options) {
   gutil.log(' ', 'Generating RSS and ATOM feeds...');
-  var lastUpdated = files[0].dateUpdated;
   var context = {
     title: options.title,
     description: options.description,
@@ -90,9 +87,11 @@ function generateFeeds(files, options) {
     context.baseUrl += options.section + '/';
     context.analyticsQS = context.analyticsQS.replace('root_feed', options.section + '_feed');
   }
-  const now = moment.utc(lastUpdated);
-  context.rssPubDate = now.format('DD MMM YYYY HH:mm:ss [GMT]');
-  context.atomPubDate = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
+  // Note - use last updated instead of now to prevent feeds from being
+  // generated every single time. This will only generate if the feeds are
+  // actually updated.
+  context.rssPubDate = wfHelper.dateFormatRSS(files[0].dateUpdatedMoment);
+  context.atomPubDate = wfHelper.dateFormatAtom(files[0].dateUpdatedMoment);
 
   var template = path.join(GLOBAL.WF.src.templates, 'atom.xml');
   var outputFile = path.join(options.outputPath, 'atom.xml');
@@ -105,7 +104,6 @@ function generateFeeds(files, options) {
 
 function generatePodcastFeed(files, options) {
   gutil.log(' ', 'Generating podcast feed for', options.title);
-  var lastUpdated = files[0].datePublished;
   var context = {
     title: options.title,
     subtitle: options.subtitle,
@@ -119,7 +117,10 @@ function generatePodcastFeed(files, options) {
   if (options.baseUrl) {
     context.baseUrl = options.baseUrl;
   }
-  context.rssPubDate = moment.utc(lastUpdated).format('DD MMM YYYY HH:mm:ss [GMT]');
+  // Note - use last updated instead of now to prevent feeds from being
+  // generated every single time. This will only generate if the feeds are
+  // actually updated.
+  context.rssPubDate = wfHelper.dateFormatRSS(files[0].dateUpdatedMoment);
   var template = path.join(GLOBAL.WF.src.templates, 'shows', 'podcast.xml');
   var outputFile = path.join(options.outputPath, 'feed.xml');
   renderTemplate(template, context, outputFile);
@@ -153,7 +154,7 @@ function generateTOCbyMonth(files, options) {
     year: options.year,
     title: options.title,
     section: options.section,
-    months: splitArticlesByMonth(files).reverse()
+    months: wfHelper.splitByMonth(files).reverse()
   };
   var template = path.join(GLOBAL.WF.src.templates, 'toc-month.yaml');
   var outputFile = path.join(options.outputPath, '_toc.yaml');
